@@ -2,9 +2,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
 import type { Region } from 'wavesurfer.js/dist/plugins/regions.js';
-import axios from 'axios';
-import './App.css';
 import { uploadFile } from './api';
+import './App.css';
 
 function App() {
     const waveformRef = useRef<HTMLDivElement>(null);
@@ -33,10 +32,8 @@ function App() {
         const file = e.target.files?.[0];
         if (!file) return;
         setIsLoading(true);
-        const formData = new FormData();
-        formData.append('file', file);
         const res = await uploadFile(file);
-        setChords(res.data.chords);
+        setChords(res.chords);
 
         if (wavesurfer) wavesurfer.destroy();
         const ws = WaveSurfer.create({
