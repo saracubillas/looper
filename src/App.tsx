@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
+import type { Region } from 'wavesurfer.js/dist/plugins/regions.js';
 import axios from 'axios';
 import './App.css';
 
@@ -10,9 +11,9 @@ function App() {
     const [chords, setChords] = useState<{ start: number, chord: string }[]>([]);
     const [activeChord, setActiveChord] = useState<string>('');
     const [loop, setLoop] = useState(true);
-    const regions = RegionsPlugin.create();
-    let activeRegion = null;
     const [isLoading, setIsLoading] = useState(false);
+    const regions = RegionsPlugin.create();
+    let activeRegion: Region | null = null;
 
     useEffect(() => {
         if (!wavesurfer || chords.length === 0) return;
@@ -47,13 +48,13 @@ function App() {
         ws.load(URL.createObjectURL(file));
         setWavesurfer(ws);
 
-        const random = (min, max) => Math.random() * (max - min) + min;
-        const randomColor = () => `rgba(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)}, 0.5)`;
+        const random = (min: number, max: number): number => Math.random() * (max - min) + min;
+        const randomColor = (): string => `rgba(${random(0, 255)}, ${random(0, 255)}, ${random(0, 255)}, 0.5)`;
 
         regions.enableDragSelection({ color: 'rgba(255, 0, 0, 0.1)' });
-        regions.on('region-updated', (region) => console.log('Updated region', region));
-        regions.on('region-in', (region) => { activeRegion = region });
-        regions.on('region-out', (region) => {
+        regions.on('region-updated', (region: Region) => console.log('Updated region', region));
+        regions.on('region-in', (region: Region) => { activeRegion = region });
+        regions.on('region-out', (region: Region) => {
             if (activeRegion === region) {
                 if (loop) {
                     region.play();
@@ -62,7 +63,7 @@ function App() {
                 }
             }
         });
-        regions.on('region-clicked', (region, e) => {
+        regions.on('region-clicked', (region: Region, e: MouseEvent) => {
             e.stopPropagation();
             activeRegion = region;
             region.play(true);
