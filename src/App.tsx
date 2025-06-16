@@ -4,6 +4,7 @@ import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
 import type { Region } from 'wavesurfer.js/dist/plugins/regions.js';
 import axios from 'axios';
 import './App.css';
+import { uploadFile } from './api';
 
 function App() {
     const waveformRef = useRef<HTMLDivElement>(null);
@@ -34,7 +35,7 @@ function App() {
         setIsLoading(true);
         const formData = new FormData();
         formData.append('file', file);
-        const res = await axios.post('http://localhost:8000/upload/', formData);
+        const res = await uploadFile(file);
         setChords(res.data.chords);
 
         if (wavesurfer) wavesurfer.destroy();
